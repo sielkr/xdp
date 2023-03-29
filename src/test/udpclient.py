@@ -1,16 +1,17 @@
+# UDP Echo Client
+
 import socket
 
-msgFromClient = "Hello UDP Server"
-bytesToSend = str.encode(msgFromClient)
-serverAddressPort = ("127.0.0.1", 20001)
-bufferSize = 1024
+send = b"Hello World!"
+address = ("127.0.0.1", 20001)
+buffer = 1024
 
 def udpclient():
-  UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-  UDPClientSocket.sendto(bytesToSend, serverAddressPort)
-  msgFromServer = UDPClientSocket.recvfrom(bufferSize)
-  msg = "Message from Server {}".format(msgFromServer[0])
+  udp = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+  udp.sendto(send, address)
+  received = udp.recvfrom(buffer)
+  msg = f"Message Received: {received[0]}"
   print(msg)
  
 if __name__ == "__main__":
-  udp_server()
+  udpclient()
