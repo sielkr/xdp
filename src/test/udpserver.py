@@ -1,28 +1,20 @@
+# UDP Echo Server
+
 import socket
 
-localIP = "127.0.0.1"
-localPort = 20001
-bufferSize = 1024
-
-bytesToSend = f"Hello UDP Client"
-udp = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-udp.bind((localIP, localPort))
-
-print("UDP server up and listening")
+ip = "127.0.0.1"
+port = 20001
+buffer = 1024
 
 def udpserver():
-    while(True):
-        pair = udp.recvfrom(bufferSize)
-        message = pair[0]
-        address = pair[1]
-
-        msg = "Message from Client:{}".format(message)
-        addr = "Client IP Address:{}".format(address)
-
-        print(msg)
-        print(addr)
-
-        udp.sendto(bytesToSend, address)
+    udp = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    udp.bind((ip, port))
+    print("Created UDP Server")
+    while True:
+        pair = udp.recvfrom(buffer)
+        pr = f"Message Received:{pair[0]}, Client IP:{pair[1]}"
+        print(pr)
+        udp.sendto(pair[0], pair[1])
 
 if __name__ == "__main__":
     udpserver()
