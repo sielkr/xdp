@@ -11,8 +11,8 @@
 
 struct bpf_map_def SEC("maps") cookie_map = {
     .type = BPF_MAP_TYPE_HASH,
-    .key_size = sizeof(__u32),
-    .value_size = sizeof(__u32),
+    .key_size = sizeof(unsigned int),
+    .value_size = sizeof(unsigned int),
     .max_entries = 1024,
 };
 
@@ -28,15 +28,15 @@ int protection(struct xdp_md *ctx)
             if (ip->protocol == IPPROTO_TCP) {
                 // SYN Cookie
                 struct tcphdr *tcp = data + sizeof(*eth) + sizeof(*ip);
-                __u32 saddr = ip->saddr;
-                __u32 daddr = ip->daddr;
+                unsigned int saddr = ip->saddr;
+                unsigned int daddr = ip->daddr;
                 __be16 sport = tcp->source;
                 __be16 dport = tcp->dest;
 
                 if (tcp->syn && !tcp->ack) {
-                    __u32 cookie = jhash_3words(saddr, daddr, sport ^ dport ^ SECRET_KEY, 0) & 0xffffffff;
+                    unsigned int cookie = jhash_3words(saddr, daddr, sport ^ dport ^ SECRET_KEY, 0) & 0xffffffff;
 
-                    __u32 index = 0;
+                    unsigned int index = 0;
                     bpf_map_update_elem(&cookie_map, &index, &cookie, BPF_ANY);
 
                     tcp->seq = cookie;
